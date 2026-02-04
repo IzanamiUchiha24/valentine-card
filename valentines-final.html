@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💕</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .image-container {
+            margin-bottom: 30px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: auto;
+            max-height: 500px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Floating hearts animation */
+        .hearts-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: clamp(20px, 4vw, 30px);
+            animation: floatUp 4s ease-in infinite;
+            opacity: 0;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100vh) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* Play button */
+        .play-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            font-size: 32px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(118, 75, 162, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .play-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(118, 75, 162, 0.5);
+        }
+
+        .play-button:active {
+            transform: translateY(0) scale(1);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+                border-radius: 20px;
+            }
+
+            .play-button {
+                width: 70px;
+                height: 70px;
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 320px) {
+            .container {
+                padding: 15px;
+            }
+
+            .play-button {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="image-container">
+            <!-- ⭐⭐⭐ CUSTOMIZE YOUR PICTURE HERE ⭐⭐⭐ -->
+            <!-- Replace the src URL below with your own picture URL -->
+            <!-- You can upload to imgur.com, imgbb.com, or use any direct image link -->
+            <!-- Example: src="https://i.imgur.com/your-image-id.jpg" -->
+            <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=800&q=80" 
+                 alt="Picture">
+            <!-- ⭐⭐⭐ END OF CUSTOMIZABLE PICTURE ⭐⭐⭐ -->
+            
+            <div class="hearts-overlay" id="heartsOverlay"></div>
+        </div>
+
+        <button class="play-button" id="playButton">▶️</button>
+
+        <!-- ⭐⭐⭐ CUSTOMIZE YOUR MUSIC HERE ⭐⭐⭐ -->
+        <!-- Replace the src URL below with your own music file or streaming URL -->
+        <!-- Supported formats: MP3, WAV, OGG -->
+        <!-- Example: src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" -->
+        <audio id="backgroundMusic" loop>
+            <source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" type="audio/mpeg">
+        </audio>
+        <!-- ⭐⭐⭐ END OF CUSTOMIZABLE MUSIC ⭐⭐⭐ -->
+    </div>
+
+    <script>
+        const playButton = document.getElementById('playButton');
+        const music = document.getElementById('backgroundMusic');
+        const heartsOverlay = document.getElementById('heartsOverlay');
+        let isPlaying = false;
+
+        // Play/Pause music
+        playButton.addEventListener('click', function() {
+            if (isPlaying) {
+                music.pause();
+                playButton.textContent = '▶️';
+                isPlaying = false;
+            } else {
+                // Try to play music
+                music.play().then(function() {
+                    playButton.textContent = '⏸️';
+                    isPlaying = true;
+                    startHeartAnimation();
+                }).catch(function(error) {
+                    console.log('Playback failed:', error);
+                    // Retry on user interaction
+                    alert('Please click the play button again to start the music');
+                });
+            }
+        });
+
+        // Handle audio errors
+        music.addEventListener('error', function() {
+            console.log('Audio loading error - please check the music URL');
+            playButton.textContent = '▶️';
+            isPlaying = false;
+        });
+
+        // Floating hearts animation
+        let heartInterval;
+        function startHeartAnimation() {
+            if (heartInterval) clearInterval(heartInterval);
+            
+            heartInterval = setInterval(function() {
+                if (isPlaying) {
+                    const heart = document.createElement('div');
+                    heart.classList.add('heart');
+                    heart.textContent = ['❤️', '💕', '💖', '💗', '💓'][Math.floor(Math.random() * 5)];
+                    heart.style.left = Math.random() * 100 + '%';
+                    heart.style.animationDelay = Math.random() * 2 + 's';
+                    heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                    
+                    heartsOverlay.appendChild(heart);
+                    
+                    // Remove heart after animation
+                    setTimeout(function() {
+                        heart.remove();
+                    }, 6000);
+                }
+            }, 800);
+        }
+
+        // Stop hearts when music ends or pauses
+        music.addEventListener('pause', function() {
+            if (heartInterval) clearInterval(heartInterval);
+        });
+
+        // Prevent right-click on image (optional)
+        document.querySelector('.image-container img').addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+    </script>
+</body>
+</html>
